@@ -1,5 +1,6 @@
-package com.hujiang.appperformanceanalyser;
+package com.hujiang.appperformanceanalyser.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,10 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.hujiang.appperformanceanalyser.R;
 import com.hujiang.appperformanceanalyser.adapter.AppListAdapter;
+import com.hujiang.appperformanceanalyser.entity.AppInfo;
 import com.hujiang.appperformanceanalyser.utils.ProcessUtil;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,7 +33,18 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mLvAppList = (ListView) findViewById(R.id.lv_app_list);
-        mLvAppList.setAdapter(new AppListAdapter(this, new ProcessUtil().getRunningProcess(this)));
+        ProcessUtil processUtil = new ProcessUtil();
+        final List<AppInfo> runningProcessList = processUtil.getRunningProcess(this);
+        AppListAdapter appListAdapter = new AppListAdapter(this, runningProcessList);
+        mLvAppList.setAdapter(appListAdapter);
+        mLvAppList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String packageName = runningProcessList.get(position).packageName;
+                Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
+                startActivity(intent);
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
