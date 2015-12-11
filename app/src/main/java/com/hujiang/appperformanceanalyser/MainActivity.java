@@ -12,14 +12,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+
+import com.hujiang.appperformanceanalyser.adapter.AppListAdapter;
+import com.hujiang.appperformanceanalyser.utils.ProcessUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private ListView mLvAppList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mLvAppList = (ListView) findViewById(R.id.lv_app_list);
+        mLvAppList.setAdapter(new AppListAdapter(this, new ProcessUtil().getRunningProcess(this)));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
